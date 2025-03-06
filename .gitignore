@@ -1,0 +1,48 @@
+# Bỏ qua thư mục node_modules (chứa package cài đặt)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Bỏ qua thư mục build, dist
+dist/
+build/
+
+# Bỏ qua các file môi trường
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Bỏ qua cache và temp files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Bỏ qua log files
+logs/
+*.log
+*.gz
+pids/
+*.pid
+*.seed
+
+# Bỏ qua thư mục cache của npm & yarn
+.npm/
+.yarn/
+.pnp/
+
+# Bỏ qua các file test coverage
+coverage/
+*.lcov
+
+# Bỏ qua output của linter
+eslintcache
+.stylelintcache
+
+# Bỏ qua thư mục phát sinh bởi Vue CLI
+public/
