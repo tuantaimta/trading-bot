@@ -1,30 +1,44 @@
-// Nhập thư viện ccxt để giao dịch tiền điện tử
 const ccxt = require("ccxt");
-// Tải các biến môi trường từ file .env
-require("dotenv").config(); 
+require("dotenv").config();
 
-// Khởi tạo sàn MEXC với thông tin API
 const exchange = new ccxt.mexc({
   apiKey: process.env.MEXC_API_KEY,
   secret: process.env.MEXC_SECRET_KEY
 });
 
-// Hàm để lấy giá hiện tại của một cặp giao dịch
+// Lấy giá hiện tại của cặp giao dịch
 async function getPrice(pair) {
   const ticker = await exchange.fetchTicker(pair);
-  return ticker.last; // Trả về giá cuối cùng từ ticker
+  return ticker.last;
 }
 
-// Hàm để đặt lệnh giới hạn trên sàn
+// Đặt lệnh mua hoặc bán
 async function placeOrder(pair, type, price, amount) {
   try {
     const order = await exchange.createLimitOrder(pair, type, amount, price);
-    return order; // Trả về chi tiết lệnh nếu thành công
+    return order;
   } catch (error) {
-    console.error("Lệnh thất bại:", error); // Ghi lại bất kỳ lỗi nào xảy ra
-    throw error; // Ném lại lỗi để xử lý tiếp
+    console.error("Order failed:", error);
+    throw error;
   }
 }
 
-// Xuất các hàm getPrice và placeOrder để sử dụng trong các module khác
-module.exports = { getPrice, placeOrder };
+// Kiểm tra giá hiện tại và tự động bán nếu đạt mức giá mong muốn
+async function sellOrder(pair, sellPrice, amount) {
+  try {
+    const currentPrice = await getPrice(pair);
+    console.log(`Current price: ${currentPrice}, Sell target: ${sellPrice}`);
+
+    if (currentPrice >= sellPrice) {
+      const order = await placeOrder(pair, "sell", sellPrice, amount);
+      return order;
+    } else {
+      return { message: "Chưa đạt giá bán mong muốn" };
+    }
+  } catch (error) {
+    console.error("Sell order failed:", error);
+    throw error;
+  }
+}
+
+module.exports = { getPrice, placeOrder, sellOrder };
